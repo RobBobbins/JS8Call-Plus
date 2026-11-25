@@ -2,8 +2,6 @@ name: JS8Call Plus CI Build for Windows 11 amd64
 run-name: ${{ github.event.pull_request.title || github.ref_name }} CI Build for Windows 11
 
 on:
-  push:
-  pull_request:
   workflow_dispatch:
     inputs:
       environment:

@@ -7,7 +7,6 @@ name: JS8Call Plus CI Build for Linux amd64/aarch64
 run-name: ${{ github.event.pull_request.title || github.ref_name }} CI Build for Linux
 
 on:
-  push:
   workflow_dispatch:
     inputs:
       environment:
@@ -15,7 +14,6 @@ on:
         type: environment
         default: CI
         required: false
-  pull_request:
   workflow_call:
     inputs:
       environment:

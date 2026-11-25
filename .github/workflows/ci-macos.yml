@@ -2,8 +2,6 @@ name: JS8Call Plus CI Build for MacOS (Apple silicon and Intel)
 run-name: ${{ github.event.pull_request.title || github.ref_name }} CI Build for MacOS
 
 on:
-  push:
-  pull_request:
   workflow_dispatch:
     inputs:
       environment:
