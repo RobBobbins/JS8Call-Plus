@@ -146,10 +146,18 @@ jobs:
         echo "JS8_SAFE_VER=$safeVer" >> $GITHUB_ENV
         echo "SAFE_VER=$safeVer"
 
+    # js8lib's Intel libusb is unsigned, so Xcode's own signing step fails.
+    # Build without signing, then sign the whole app ad hoc, as Xcode does
+    # for the Apple silicon build.
     - name: Build JS8Call Plus
       run: |
         cd ./build
-        xcodebuild -scheme JS8Call -configuration Release
+        xcodebuild -scheme JS8Call -configuration Release CODE_SIGNING_ALLOWED=NO
+
+    - name: Sign the app ad hoc
+      run: |
+        codesign --force --deep --sign - "build/Release/JS8Call-Plus.app"
+        codesign --verify --deep --strict --verbose=2 "build/Release/JS8Call-Plus.app"
 
     - name: Check the app
       run: |
