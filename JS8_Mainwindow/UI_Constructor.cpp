@@ -993,9 +993,12 @@ UI_Constructor::UI_Constructor(QString const &program_info,
                     auto speed = JS8::Submode::name(submode);
                     if (submode != m_nSubMode) {
                         auto qrqAction =
-                            menu->addAction(QString("Jump to %1%2 speed")
-                                                .arg(speed.left(1))
-                                                .arg(speed.mid(1).toLower()));
+                            menu->addAction(
+                                (speed == "JS8 40" || speed == "JS8 60")
+                                    ? QString("Jump to %1 wpm speed").arg(speed)
+                                    : QString("Jump to %1%2 speed")
+                                          .arg(speed.left(1))
+                                          .arg(speed.mid(1).toLower()));
                         connect(qrqAction, &QAction::triggered, this,
                                 [this, submode]() { setSubmode(submode); });
                     }
@@ -1263,9 +1266,12 @@ UI_Constructor::UI_Constructor(QString const &program_info,
                     auto speed = JS8::Submode::name(submode);
                     if (submode != m_nSubMode) {
                         auto qrqAction =
-                            menu->addAction(QString("Jump to %1%2 speed")
-                                                .arg(speed.left(1))
-                                                .arg(speed.mid(1).toLower()));
+                            menu->addAction(
+                                (speed == "JS8 40" || speed == "JS8 60")
+                                    ? QString("Jump to %1 wpm speed").arg(speed)
+                                    : QString("Jump to %1%2 speed")
+                                          .arg(speed.left(1))
+                                          .arg(speed.mid(1).toLower()));
                         connect(qrqAction, &QAction::triggered, this,
                                 [this, submode]() { setSubmode(submode); });
                     }

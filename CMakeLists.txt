@@ -132,7 +132,7 @@ include_directories(${FFTW3_INCLUDE_DIRS})
 
 #------------------------------------------------------------------------------#
 # JS8Call Plus: the js8core-plus decoder (vendor/js8core-plus, MIT licence,
-# https://github.com/RobBobbins/JS8Core commit 6012b1e). Built as a plain C++
+# https://github.com/RobBobbins/JS8Core commit 149b046). Built as a plain C++
 # library with no Qt; JS8_Mode/JS8.cpp calls its legacy_decode().
 #------------------------------------------------------------------------------#
 

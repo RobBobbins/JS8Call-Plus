@@ -6,7 +6,7 @@
 	<project_license>GPL-3.0</project_license>
 	<summary>Amateur Radio Weak Signal Operating</summary>
 	<description>
-		<p>JS8Call Plus is JS8Call 3.0.3 with the js8core-plus decoder. It is not the official JS8Call.</p>
+		<p>JS8Call Plus is JS8Call-improved 3.0.3 with the js8core-plus decoder. It is not the official JS8Call.</p>
 		<p>JS8Call is an experiment in combining the robustness of FT8 (a weak-signal mode by K1JT) with a messaging and network protocol layer for weak signal communication. The open source software is designed for connecting amateur radio operators who are operating under weak signal conditions and offers real-time keyboard-to-keyboard messaging, store-and-forward messaging, and automatic station announcements.</p>
 	</description>
 	<launchable type="desktop-id">js8call-plus.desktop</launchable>

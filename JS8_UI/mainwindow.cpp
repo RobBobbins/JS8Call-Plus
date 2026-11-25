@@ -1434,10 +1434,10 @@ void UI_Constructor::createStatusBar() // createStatusBar
             modeLabelText = "JS8 Fast";
             break;
         case Varicode::JS8CallTurbo:
-            modeLabelText = "JS8 40";
+            modeLabelText = "JS8 40 wpm";
             break;
         case Varicode::JS8CallUltra:
-            modeLabelText = "JS8 60";
+            modeLabelText = "JS8 60 wpm";
             break;
         default:
             modeLabelText = "JS8";
@@ -5660,10 +5660,10 @@ void UI_Constructor::updateModeButtonText() {
             modeLabelText = "JS8 Fast";
             break;
         case Varicode::JS8CallTurbo:
-            modeLabelText = "JS8 40";
+            modeLabelText = "JS8 40 wpm";
             break;
         case Varicode::JS8CallUltra:
-            modeLabelText = "JS8 60";
+            modeLabelText = "JS8 60 wpm";
             break;
         default:
             modeLabelText = "JS8";

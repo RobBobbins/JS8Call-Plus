@@ -1,6 +1,6 @@
 # JS8Call Plus
 
-JS8Call Plus is JS8Call 3.0.3 with a better decoder: js8core-plus.
+JS8Call Plus is JS8Call-improved 3.0.3 with a better decoder: js8core-plus.
 It looks and works like JS8Call. Only the decoder is different.
 
 JS8Call Plus is not the official JS8Call and is not supported by the
@@ -9,26 +9,26 @@ JS8Call-improved team.
 ## Why
 
 On live JS8 traffic, js8core-plus decodes 17.0% more transmissions than
-JS8Call 3.0.3.
+JS8Call-improved 3.0.3.
 
 Live test, public KiwiSDR receivers on 7.078 MHz, frames decoded from
-2026-11-22 22:16 UTC to 2026-11-25 03:15 UTC:
+2026-11-22 22:16 UTC to 2026-11-25 16:30 UTC:
 
-| Speed  | JS8Call 3.0.3 (bug fixed) | JS8Call Plus | More   |
+| Speed  | JS8Call-improved 3.0.3 (bug fixed) | JS8Call Plus | More   |
 |--------|--------------------------:|-------------:|-------:|
-| Normal | 11,931                    | 13,883       | +16.4% |
-| Fast   | 1,705                     | 2,053        | +20.4% |
+| Normal | 12,581                    | 14,634       | +16.3% |
+| Fast   | 1,767                     | 2,133        | +20.7% |
 | Turbo  | 189                       | 210          | +11.1% |
-| Slow   | 148                       | 204          | +37.8% |
-| All    | 13,973                    | 16,350       | +17.0% |
+| Slow   | 158                       | 219          | +38.6% |
+| All    | 14,695                    | 17,196       | +17.0% |
 
-The 3.0.3 column has the JS8Call-improved team's fix for a 3.0.3 bug that
+The JS8Call-improved 3.0.3 column has the JS8Call-improved team's fix for a JS8Call-improved 3.0.3 bug that
 misses stations overlapping a stronger one. The fix is in their
 development code, not in a release yet.
 
 Live scoreboard: https://va3oso.ca/js8core/livetest/
 
-## What's different from JS8Call 3.0.3
+## What's different from JS8Call-improved 3.0.3
 
 - The js8core-plus decoder.
 - Settings > General > Behavior > Enable Deep Decoding: finds about 2%
@@ -60,7 +60,7 @@ https://js8call-improved.github.io/JS8Call-improved/d6/d14/md_docs_2user__guide_
 
 ## Credits
 
-- Based on JS8Call 3.0.3 by the JS8Call-improved team: Chris AC9KH,
+- Based on JS8Call-improved 3.0.3 by the JS8Call-improved team: Chris AC9KH,
   Allan W6BAZ, Wyatt KJ4CTD, Joe K0OG, Andreas DJ3EI, Rob K4RWR,
   Jordan KN4CRD. https://github.com/JS8Call-improved/JS8Call-improved
 - JS8Call was created by Jordan Sherer, KN4CRD.

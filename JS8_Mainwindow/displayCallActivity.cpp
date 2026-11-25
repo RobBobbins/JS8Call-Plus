@@ -294,9 +294,9 @@ void UI_Constructor::displayCallActivity() {
 
                 auto name = JS8::Submode::name(d.submode);
                 auto modeItem = (name == "JS8 40" || name == "JS8 60")
-                    ? new QTableWidgetItem(name.right(2))
+                    ? new QTableWidgetItem(name + " wpm")
                     : new QTableWidgetItem(name.left(1).replace("H", "N"));
-                modeItem->setToolTip(name);
+                modeItem->setToolTip((name == "JS8 40" || name == "JS8 60") ? name + " wpm" : name);
                 modeItem->setData(Qt::UserRole, QVariant(name));
                 modeItem->setTextAlignment(Qt::AlignCenter);
                 ui->tableWidgetCalls->setItem(row, col++, modeItem);
