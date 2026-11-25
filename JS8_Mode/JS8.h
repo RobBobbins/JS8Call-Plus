@@ -102,6 +102,11 @@ class Decoder : public QObject {
     void start(QThread::Priority priority);
     void quit();
     void decode();
+
+    // JS8Call Plus: Settings > General > Behavior > Enable Deep Decoding,
+    // and the station callsign used for the decoder's callsign hints.
+    void setDeepDecoding(bool enabled);
+    void setMyCall(QString const &callsign);
 };
 } // namespace JS8
 

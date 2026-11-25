@@ -12,6 +12,11 @@
 #include "ldpc_feedback.h"
 #include "soft_combiner.h"
 
+// JS8Call Plus: the js8core-plus decoder (vendor/js8core-plus, MIT licence).
+#include "callsign_hints.hpp"
+#include "js8core/decoder.hpp"
+#include "js8core/decoder_state.hpp"
+
 #include <QDebug>
 #include <QLoggingCategory>
 #include <QtGlobal>
@@ -2568,6 +2573,22 @@ template class DecodeMode<ModeI>;
 // Worker
 /******************************************************************************/
 
+namespace {
+// JS8Call Plus: settings shared by the GUI thread and the decoder thread.
+// The callsign hints (own callsign and stations heard in the last 10
+// minutes) guard themselves with a mutex.
+
+js8core::CallsignHints &plusHints() {
+    static js8core::CallsignHints hints;
+    return hints;
+}
+
+std::atomic<bool> &plusDeepDecoding() {
+    static std::atomic<bool> deep{false};
+    return deep;
+}
+} // namespace
+
 namespace JS8 {
 class Worker : public QObject {
     Q_OBJECT
@@ -2584,47 +2605,6 @@ class Worker : public QObject {
 
         struct dec_data &m_data;
 
-        // Mode-specific decode strategy; we'll instantiate one of
-        // these for each of the 5 modes; this class is an aggregate
-        // of the 5 modes.
-
-        struct DecodeEntry {
-            std::variant<DecodeMode<ModeA>, DecodeMode<ModeB>,
-                         DecodeMode<ModeC>, DecodeMode<ModeE>,
-                         DecodeMode<ModeI>>
-                decode;
-            int mode;
-            int &kpos;
-            int &ksz;
-
-            template <typename DecodeModeType>
-            DecodeEntry(std::in_place_type_t<DecodeModeType>, int mode,
-                        int &kpos, int &ksz)
-                : decode(std::in_place_type<DecodeModeType>), mode(mode),
-                  kpos(kpos), ksz(ksz) {}
-        };
-
-        // Since a strategy can be neither moved nor copied, we must
-        // instantiate them in-place. Note that with the advent of the
-        // multi-decoder, mode identifiers became a bitset instead of
-        // integral values. The order defined here is the order that
-        // the decode loop will run in; we're matching the Fortran
-        // version here in terms of faster modes first.
-
-        template <typename ModeType>
-        DecodeEntry makeDecodeEntry(int shift, int &kpos, int &ksz) {
-            return DecodeEntry(std::in_place_type<DecodeMode<ModeType>>,
-                               1 << shift, kpos, ksz);
-        }
-
-        std::array<DecodeEntry, 5> m_decodes = {
-            {makeDecodeEntry<ModeI>(4, m_data.params.kposI, m_data.params.kszI),
-             makeDecodeEntry<ModeE>(3, m_data.params.kposE, m_data.params.kszE),
-             makeDecodeEntry<ModeC>(2, m_data.params.kposC, m_data.params.kszC),
-             makeDecodeEntry<ModeB>(1, m_data.params.kposB, m_data.params.kszB),
-             makeDecodeEntry<ModeA>(0, m_data.params.kposA,
-                                    m_data.params.kszA)}};
-
       public:
         // Constructor
 
@@ -2632,39 +2612,71 @@ class Worker : public QObject {
 
         // Execute a decoding pass, using the supplied event emitter to
         // emit events as they occur.
+        //
+        // JS8Call Plus: the pass is done by the js8core-plus decoder.
+        // It runs the same speeds in the same order (I, E, C, B, A) on
+        // the same sample buffer and parameters, and reports the same
+        // events, which are passed on here unchanged.
 
         void operator()(::JS8::Event::Emitter emitEvent) {
-            // The multi-decoder can provide data for multiple modes at
-            // the same time; specific decodes to be performed for this
-            // pass are in the `nsubmodes` bitset.
+            using Clock = js8core::CallsignHints::Clock;
+            namespace ev = js8core::events;
 
-            auto const set = m_data.params.nsubmodes;
-            std::size_t sum = 0;
+            js8core::DecodeState task;
+            task.samples.assign(std::begin(m_data.d2), std::end(m_data.d2));
 
-            // Let any interested parties know that we've started a run
-            // for the set of modes requested.
+            auto const &in = m_data.params;
+            auto &out = task.params;
+            out.utc = in.nutc;
+            out.nfqso = in.nfqso;
+            out.newdat = in.newdat;
+            out.nfa = in.nfa;
+            out.nfb = in.nfb;
+            out.syncStats = in.syncStats;
+            out.kin = in.kin;
+            out.kposA = in.kposA;
+            out.kposB = in.kposB;
+            out.kposC = in.kposC;
+            out.kposE = in.kposE;
+            out.kposI = in.kposI;
+            out.kszA = in.kszA;
+            out.kszB = in.kszB;
+            out.kszC = in.kszC;
+            out.kszE = in.kszE;
+            out.kszI = in.kszI;
+            out.nsubmodes = in.nsubmodes;
+            out.deep = plusDeepDecoding().load();
 
-            emitEvent(::JS8::Event::DecodeStarted{set});
+            plusHints().fill(task, Clock::now());
 
-            // Iterate through all the modes we're aware of, performing
-            // a mode-specific decode pass if the mode is scheduled for
-            // decoding during this pass.
-
-            for (auto &entry : m_decodes) {
-                if ((set & entry.mode) == entry.mode) {
-                    std::visit(
-                        [&](auto &&decode) {
-                            sum += decode(m_data, entry.kpos, entry.ksz,
-                                          emitEvent);
-                        },
-                        entry.decode);
+            js8core::legacy_decode(task, [&emitEvent](ev::Variant const &event) {
+                if (auto const *e = std::get_if<ev::DecodeStarted>(&event)) {
+                    emitEvent(::JS8::Event::DecodeStarted{e->submodes});
+                } else if (auto const *e = std::get_if<ev::SyncStart>(&event)) {
+                    emitEvent(::JS8::Event::SyncStart{e->position, e->size});
+                } else if (auto const *e = std::get_if<ev::SyncState>(&event)) {
+                    ::JS8::Event::SyncState s{};
+                    s.mode = e->mode;
+                    s.frequency = e->frequency;
+                    s.dt = e->dt;
+                    if (e->kind == ev::SyncState::Kind::Decoded) {
+                        s.type = ::JS8::Event::SyncState::Type::DECODED;
+                        s.sync.decoded = e->sync.decoded;
+                    } else {
+                        s.type = ::JS8::Event::SyncState::Type::CANDIDATE;
+                        s.sync.candidate = e->sync.candidate;
+                    }
+                    emitEvent(s);
+                } else if (auto const *e = std::get_if<ev::Decoded>(&event)) {
+                    plusHints().note(*e, Clock::now());
+                    emitEvent(::JS8::Event::Decoded{e->utc, e->snr, e->xdt,
+                                                    e->frequency, e->data,
+                                                    e->type, e->quality,
+                                                    e->mode});
+                } else if (auto const *e = std::get_if<ev::DecodeFinished>(&event)) {
+                    emitEvent(::JS8::Event::DecodeFinished{e->decoded});
                 }
-            }
-
-            // Let any interested parties know the total number of decodes
-            // performed during this run.
-
-            emitEvent(::JS8::Event::DecodeFinished{sum});
+            });
         }
     };
 
@@ -2761,6 +2773,14 @@ void JS8::Decoder::quit() {
 void JS8::Decoder::decode() {
     m_worker->copy();
     m_semaphore.release();
+}
+
+void JS8::Decoder::setDeepDecoding(bool const enabled) {
+    plusDeepDecoding().store(enabled);
+}
+
+void JS8::Decoder::setMyCall(QString const &callsign) {
+    plusHints().set_own(callsign.trimmed().toUpper().toStdString());
 }
 
 /******************************************************************************/

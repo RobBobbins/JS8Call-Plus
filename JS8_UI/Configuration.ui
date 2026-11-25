@@ -365,6 +365,16 @@
                    </widget>
                   </item>
                   <item>
+                   <widget class="QCheckBox" name="deep_decoding_check_box">
+                    <property name="text">
+                     <string>Enable Deep Decoding (+2% decodes, more errors, 2x decode time)</string>
+                    </property>
+                    <property name="checked">
+                     <bool>false</bool>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
                    <widget class="QCheckBox" name="transmit_off_check_box">
                     <property name="text">
                      <string>Transmitter (TX) off at startup</string>

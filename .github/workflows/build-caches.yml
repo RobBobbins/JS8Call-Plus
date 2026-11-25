@@ -3,13 +3,9 @@ permissions:
 
 name: CI Build Caches
 
-# Build on a manual trigger, or if this workflow is pushed, or on the schedule. Caches expire every 7 days.
+# JS8Call Plus: manual trigger only (the weekly run is off; no JS8Call Plus build uses these caches).
 on:
   workflow_dispatch:
-  push:
-    paths: .github/workflows/build-caches.yml
-  schedule:
-    - cron: '35 2 * * 2' # This cron expression runs the workflow at 2:35am UTC, every Tuesday
 
 env:
   BUILD_TYPE: Release

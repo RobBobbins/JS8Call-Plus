@@ -88,7 +88,7 @@ int main(int argc, char *argv[]) {
                                     // that GUI has correct l18n
 
         // Override programs executable basename as application name.
-        a.setApplicationName("JS8Call");
+        a.setApplicationName("JS8Call Plus");
         a.setApplicationVersion(version());
         
         // Apply platform-specific styles from styles.h

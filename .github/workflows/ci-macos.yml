@@ -1,4 +1,4 @@
-name: CI Build for MacOS Apple silicon
+name: JS8Call Plus CI Build for MacOS (Apple silicon and Intel)
 run-name: ${{ github.event.pull_request.title || github.ref_name }} CI Build for MacOS
 
 on:
@@ -17,6 +17,7 @@ env:
 
 jobs:
   build_macos-26:
+    name: MacOS Apple silicon
     runs-on: macos-26
     permissions:
       contents: read
@@ -42,7 +43,7 @@ jobs:
         tar zxf /tmp/ffmpeg_MacOS_arm64.tar.gz
         sudo mv /tmp/ffmpeg /usr/local/ffmpeg
 
-    - name: Configure JS8Call
+    - name: Configure JS8Call Plus
       run: |
         mkdir -p ./build && cd ./build
         cmake -G Xcode -DCMAKE_PREFIX_PATH="/usr/local/js8lib" ..
@@ -61,19 +62,111 @@ jobs:
         echo "JS8_SAFE_VER=$safeVer" >> $GITHUB_ENV
         echo "SAFE_VER=$safeVer"
 
-    - name: Build JS8Call
+    - name: Build JS8Call Plus
       run: |
         cd ./build
         xcodebuild -scheme JS8Call -configuration Release
 
+    - name: Check the app
+      run: |
+        app="build/Release/JS8Call-Plus.app"
+        test -x "$app/Contents/MacOS/JS8Call-Plus"
+        lipo -archs "$app/Contents/MacOS/JS8Call-Plus"
+        ls "$app/Contents/Frameworks" | grep -i -E "avcodec|avformat|Qt" | head -20
+
     - name: Create DMG
       run: |
         echo "DMG version: ${{ env.JS8_SAFE_VER }}"
-        hdiutil create -volname "JS8Call" -srcfolder "build/Release/JS8Call.app" -format UDZO "JS8Call_${{ env.JS8_SAFE_VER }}.dmg"
+        hdiutil create -volname "JS8Call Plus" -srcfolder "build/Release/JS8Call-Plus.app" -format UDZO "JS8Call-Plus-${{ env.JS8_SAFE_VER }}-AppleSilicon.dmg"
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v7
       with:
-        name: "JS8Call_${{ env.JS8_SAFE_VER }}"
-        path: '${{ github.workspace }}/JS8Call_${{ env.JS8_SAFE_VER }}.dmg'
+        name: "JS8Call-Plus-${{ env.JS8_SAFE_VER }}-AppleSilicon"
+        path: '${{ github.workspace }}/JS8Call-Plus-${{ env.JS8_SAFE_VER }}-AppleSilicon.dmg'
+        archive: false
+
+  # JS8Call Plus: Intel Macs. js8lib's Intel package has no Qt, so Qt 6.9.3
+  # (the version the other builds use) comes from the Qt download servers.
+  build_macos-intel:
+    name: MacOS Intel
+    runs-on: macos-15-intel
+    permissions:
+      contents: read
+      attestations: write
+      id-token: write
+
+    steps:
+    - name: Configure Git line endings
+      run: git config --global core.autocrlf input
+
+    - uses: actions/checkout@v5
+      with:
+        fetch-depth: 0
+
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+
+    - name: Grab build dependencies
+      run: |
+        curl --location --output /tmp/js8lib-intel.tar.gz https://github.com/JS8Call-improved/js8lib/releases/download/lib%2F3.0/js8lib3.0-MacOS_Intel.tar.gz
+        mkdir -p /tmp/js8lib-intel
+        tar zxf /tmp/js8lib-intel.tar.gz -C /tmp/js8lib-intel
+        echo "Folders in the archive:"
+        find /tmp/js8lib-intel -maxdepth 3 -type d | head -40
+        inc=$(find /tmp/js8lib-intel -maxdepth 3 -type d -name include | head -1)
+        root=$(dirname "$inc")
+        echo "js8lib root: $root"
+        sudo mv "$root" /usr/local/js8lib
+        ls /usr/local/js8lib /usr/local/js8lib/lib | head -40
+
+    - name: Install Qt 6.9.3
+      run: |
+        python -m pip install aqtinstall
+        python -m aqt install-qt mac desktop 6.9.3 clang_64 -m qtmultimedia qtserialport -O "$HOME/Qt"
+        ls "$HOME/Qt/6.9.3"
+
+    - name: Configure JS8Call Plus
+      run: |
+        mkdir -p ./build && cd ./build
+        cmake -G Xcode -DCMAKE_OSX_ARCHITECTURES=x86_64 -DCMAKE_PREFIX_PATH="/usr/local/js8lib;$HOME/Qt/6.9.3/macos" ..
+
+    - name: Extract version
+      run: |
+        ver=$(grep "CMAKE_PROJECT_VERSION:STATIC=" build/CMakeCache.txt | cut -d'=' -f2 | tr -d '[:space:]')
+        gitHash=$(git rev-parse --short HEAD)
+
+        if [ "$ver" = "0.0.0" ]; then
+          safeVer=$gitHash
+        else
+          safeVer=$ver
+        fi
+
+        echo "JS8_SAFE_VER=$safeVer" >> $GITHUB_ENV
+        echo "SAFE_VER=$safeVer"
+
+    - name: Build JS8Call Plus
+      run: |
+        cd ./build
+        xcodebuild -scheme JS8Call -configuration Release
+
+    - name: Check the app
+      run: |
+        app="build/Release/JS8Call-Plus.app"
+        test -x "$app/Contents/MacOS/JS8Call-Plus"
+        lipo -archs "$app/Contents/MacOS/JS8Call-Plus"
+        ls "$app/Contents/Frameworks" | grep -i -E "avcodec|avformat|Qt" | head -20
+        ls "$app/Contents/PlugIns/multimedia" || true
+
+    - name: Create DMG
+      run: |
+        echo "DMG version: ${{ env.JS8_SAFE_VER }}"
+        hdiutil create -volname "JS8Call Plus" -srcfolder "build/Release/JS8Call-Plus.app" -format UDZO "JS8Call-Plus-${{ env.JS8_SAFE_VER }}-Intel.dmg"
+
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v7
+      with:
+        name: "JS8Call-Plus-${{ env.JS8_SAFE_VER }}-Intel"
+        path: '${{ github.workspace }}/JS8Call-Plus-${{ env.JS8_SAFE_VER }}-Intel.dmg'
         archive: false

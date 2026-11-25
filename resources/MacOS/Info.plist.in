@@ -7,17 +7,17 @@
     <key>CFBundleDevelopmentRegion</key>
     <string>English</string>
     <key>CFBundleExecutable</key>
-    <string>JS8Call</string>
+    <string>JS8Call-Plus</string>
     <key>CFBundleGetInfoString</key>
-    <string>JS8Call facilitates amateur radio communication using very weak signals</string>
+    <string>JS8Call Plus facilitates amateur radio communication using very weak signals</string>
     <key>CFBundleIconFile</key>
     <string>${MACOSX_BUNDLE_ICON_FILE}</string>
     <key>CFBundleIdentifier</key>
-    <string>org.kn4crd.js8call</string>
+    <string>ca.va3oso.js8callplus</string>
     <key>CFBundleInfoDictionaryVersion</key>
     <string>6.0</string>
     <key>CFBundleName</key>
-    <string>JS8Call</string>
+    <string>JS8Call Plus</string>
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleShortVersionString</key>

@@ -2151,6 +2151,8 @@ void UI_Constructor::decodeStart() {
                          << dec_data.params.kposI + dec_data.params.kszI
                          << QString("(%1)").arg(dec_data.params.kszI);
 
+    m_decoder.setDeepDecoding(m_config.deep_decoding());
+    m_decoder.setMyCall(m_config.my_callsign());
     m_decoder.decode();
 }
 
@@ -4849,7 +4851,7 @@ QMap<QString, QString> UI_Constructor::buildMacroValues() {
     auto lastActive =
         DriftingDateTime::currentDateTimeUtc().addSecs(-m_idleMinutes * 60);
     QString myIdle = since(lastActive).toUpper().replace("NOW", "0M");
-    QString myVersion = version();
+    QString myVersion = "JS8CALL-PLUS " + version();
 
     QMap<QString, QString> values = {
         {"<MYCALL>", m_config.my_callsign()},

@@ -145,6 +145,7 @@ class Configuration final : public QObject {
     bool hb_rate_limit() const;
     bool relay_off() const;
     bool monitor_off_at_startup() const;
+    bool deep_decoding() const;
     bool transmit_off_at_startup() const;
     bool monitor_last_used() const;
     bool insert_blank() const;

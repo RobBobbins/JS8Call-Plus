@@ -717,6 +717,7 @@ class Configuration::impl final : public QDialog {
     bool hb_rate_limit_;
     bool relay_disabled_;
     bool monitor_off_at_startup_;
+    bool deep_decoding_;
     bool transmit_off_at_startup_;
     bool monitor_last_used_;
     bool insert_blank_;
@@ -952,6 +953,7 @@ bool Configuration::relay_off() const { return m_->relay_disabled_; }
 bool Configuration::monitor_off_at_startup() const {
     return m_->monitor_off_at_startup_;
 }
+bool Configuration::deep_decoding() const { return m_->deep_decoding_; }
 bool Configuration::transmit_off_at_startup() const {
     return m_->transmit_off_at_startup_;
 }
@@ -1903,6 +1905,7 @@ void Configuration::impl::initialize_models() {
     ui_->heartbeat_ack_snr_check_box->setChecked(heartbeat_ack_snr_);
     ui_->relay_disabled_check_box->setChecked(relay_disabled_);
     ui_->monitor_off_check_box->setChecked(monitor_off_at_startup_);
+    ui_->deep_decoding_check_box->setChecked(deep_decoding_);
     ui_->transmit_off_check_box->setChecked(transmit_off_at_startup_);
     ui_->monitor_last_used_check_box->setChecked(monitor_last_used_);
     ui_->stations_table_view->setEnabled(
@@ -2293,6 +2296,7 @@ void Configuration::impl::read_settings() {
     heartbeat_ack_snr_ = settings_->value("HeartbeatAckSNR", false).toBool();
     relay_disabled_ = settings_->value("RelayOFF", false).toBool();
     monitor_off_at_startup_ = settings_->value("MonitorOFF", false).toBool();
+    deep_decoding_ = settings_->value("DeepDecoding", false).toBool();
     transmit_off_at_startup_ = settings_->value("TransmitOFF", false).toBool();
     monitor_last_used_ = settings_->value("MonitorLastUsed", false).toBool();
     spot_to_reporting_networks_ =
@@ -2669,6 +2673,7 @@ void Configuration::impl::write_settings() {
     settings_->setValue("HeartbeatAckSNR", heartbeat_ack_snr_);
     settings_->setValue("RelayOFF", relay_disabled_);
     settings_->setValue("MonitorOFF", monitor_off_at_startup_);
+    settings_->setValue("DeepDecoding", deep_decoding_);
     settings_->setValue("TransmitOFF", transmit_off_at_startup_);
     settings_->setValue("MonitorLastUsed", monitor_last_used_);
     settings_->setValue("PSKReporter", spot_to_reporting_networks_);
@@ -3340,6 +3345,7 @@ void Configuration::impl::accept() {
     hb_rate_limit_ = ui_->hb_rate_limit_check_box->isChecked();
     relay_disabled_ = ui_->relay_disabled_check_box->isChecked();
     monitor_off_at_startup_ = ui_->monitor_off_check_box->isChecked();
+    deep_decoding_ = ui_->deep_decoding_check_box->isChecked();
     transmit_off_at_startup_ = ui_->transmit_off_check_box->isChecked();
     monitor_last_used_ = ui_->monitor_last_used_check_box->isChecked();
     miles_ = ui_->miles_check_box->isChecked();
@@ -5003,7 +5009,7 @@ QString Configuration::impl::build_diagnostics_text() const
     QString s;
     QTextStream ts(&s);
 
-    ts << "JS8Call Diagnostics\n";
+    ts << "JS8Call Plus Diagnostics\n";
     ts << "Timestamp: " << QDateTime::currentDateTime().toString(Qt::ISODate) << "\n\n";
 
     ts << "Application\n";

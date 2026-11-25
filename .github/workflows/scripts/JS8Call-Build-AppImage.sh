@@ -1,5 +1,5 @@
 
-# --- Build an AppImage for JS8Call ---
+# --- Build an AppImage for JS8Call Plus ---
 # --- Run on Ubuntu 24 Server ---
 # --- Target: any Linux system with glibc 2.39 or later ---
 
@@ -13,8 +13,8 @@ set -euo pipefail
 
 # --- Variables ---
 JS8_ARCH=$(uname -m)
-JS8_SOURCE="https://github.com/JS8Call-improved/JS8Call-improved.git"
-JS8_BUILD_BRANCH="release/3.0.3"
+JS8_SOURCE="https://github.com/RobBobbins/JS8Call-Plus.git"
+JS8_BUILD_BRANCH="main"
 
 # AppImage uses x86_64 and aarch64 — not Debian's amd64/arm64
 if [ "$JS8_ARCH" = "x86_64" ]; then
@@ -33,11 +33,11 @@ QT_URL="https://github.com/JS8Call-improved/js8lib/releases/download/lib%2F3.0/Q
 # --- Directories ---
 BUILD_DIR="$HOME/js8call-appimage-build"
 STAGING_DIR="$BUILD_DIR/staging"
-APPDIR="$STAGING_DIR/JS8Call.AppDir"
+APPDIR="$STAGING_DIR/JS8Call-Plus.AppDir"
 INSTALL_PREFIX="/usr/lib/js8call"
 
 echo "######################################################################"
-echo " Building JS8Call AppImage"
+echo " Building JS8Call Plus AppImage"
 echo " Architecture: $JS8_ARCH"
 echo "######################################################################"
 sleep 2
@@ -162,7 +162,7 @@ echo "AppImage Target Export Version: $JS8_VERSION"
 # --- Build JS8Call ---
 echo "Build version: $JS8_VERSION"
 echo "######################################################################"
-echo " Building JS8Call $JS8_VERSION AppImage on ($ACTIVE_BRANCH)"
+echo " Building JS8Call Plus $JS8_VERSION AppImage on ($ACTIVE_BRANCH)"
 echo " Architecture: $JS8_ARCH"
 echo "######################################################################"
 mkdir build && cd build
@@ -190,21 +190,21 @@ sleep 2
 #     js8call.desktop     ← desktop entry (required, must be at root)
 #     js8call.svg         ← icon (required, name must match Icon= in .desktop)
 #     usr/
-#       bin/JS8Call       ← the compiled binary
+#       bin/JS8Call-Plus  ← the compiled binary
 #       lib/              ← bundled .so files (populated by linuxdeploy)
 
 echo "Populating AppDir..."
 
 # Binary
 mkdir -p "$APPDIR/usr/bin"
-cp JS8Call "$APPDIR/usr/bin/"
+cp JS8Call-Plus "$APPDIR/usr/bin/"
 
 # Desktop entry — must live at the ROOT of AppDir
-cat > "$APPDIR/js8call.desktop" << EOF
+cat > "$APPDIR/js8call-plus.desktop" << EOF
 [Desktop Entry]
 Type=Application
-Name=JS8Call
-Exec=JS8Call
+Name=JS8Call-Plus
+Exec=JS8Call-Plus
 Icon=js8call
 Terminal=false
 Categories=HamRadio;Network;
@@ -224,7 +224,7 @@ cp -L /usr/lib/${JS8_ARCH}-linux-gnu/libxcb-cursor.so.0 \
 # AppStream metainfo — for software center integration
 mkdir -p "$APPDIR/usr/share/metainfo"
 cp "$BUILD_DIR/JS8Call-improved/.github/workflows/misc/JS8Call.appdata.xml" \
-    "$APPDIR/usr/share/metainfo/io.github.JS8Call_improved.JS8Call.appdata.xml"
+    "$APPDIR/usr/share/metainfo/ca.va3oso.JS8CallPlus.appdata.xml"
 
 # --- Run linuxdeploy ---
 # linuxdeploy does the heavy lifting:
@@ -244,8 +244,8 @@ export QMAKE=/usr/lib/js8call/Qt/bin/qmake
 
 ./linuxdeploy.AppImage \
     --appdir "$APPDIR" \
-    --executable "$APPDIR/usr/bin/JS8Call" \
-    --desktop-file "$APPDIR/js8call.desktop" \
+    --executable "$APPDIR/usr/bin/JS8Call-Plus" \
+    --desktop-file "$APPDIR/js8call-plus.desktop" \
     --icon-file "$APPDIR/js8call.svg" \
     --plugin qt \
     --output appimage
@@ -253,25 +253,25 @@ export QMAKE=/usr/lib/js8call/Qt/bin/qmake
 # --- Strip debug symbols ---
 # linuxdeploy copies libs with debug info intact — strip them down.
 # 2>/dev/null suppresses "file format not recognized" on non-ELF files.
-find "$APPDIR" -type f \( -name "*.so*" -o -name "JS8Call" \) \
+find "$APPDIR" -type f \( -name "*.so*" -o -name "JS8Call-Plus" \) \
     -exec strip --strip-unneeded {} \; 2>/dev/null || true
 
 # linuxdeploy names the output based on the .desktop file Name= field
 # and the ARCH env var. Rename to our preferred convention.
-APPIMAGE_FILE=$(ls "$BUILD_DIR"/JS8Call-*.AppImage 2>/dev/null | head -1)
+APPIMAGE_FILE=$(ls "$BUILD_DIR"/JS8Call-Plus*.AppImage 2>/dev/null | head -1)
 if [ -z "$APPIMAGE_FILE" ]; then
     echo "ERROR: No AppImage was produced by linuxdeploy." >&2
     exit 1
 fi
-mv "$APPIMAGE_FILE" "$HOME/JS8Call-${JS8_VERSION}-${APPIMAGE_ARCH}.AppImage"
+mv "$APPIMAGE_FILE" "$HOME/JS8Call-Plus-${JS8_VERSION}-${APPIMAGE_ARCH}.AppImage"
 
 echo "######################################################################"
 echo " DONE!"
-echo " AppImage: $HOME/JS8Call-${JS8_VERSION}-${APPIMAGE_ARCH}.AppImage"
+echo " AppImage: $HOME/JS8Call-Plus-${JS8_VERSION}-${APPIMAGE_ARCH}.AppImage"
 echo ""
 echo " To run on any Linux system:"
-echo "   chmod +x JS8Call-${JS8_VERSION}-${APPIMAGE_ARCH}.AppImage"
-echo "   ./JS8Call-${JS8_VERSION}-${APPIMAGE_ARCH}.AppImage"
+echo "   chmod +x JS8Call-Plus-${JS8_VERSION}-${APPIMAGE_ARCH}.AppImage"
+echo "   ./JS8Call-Plus-${JS8_VERSION}-${APPIMAGE_ARCH}.AppImage"
 echo ""
 echo " No installation required. The file is self-contained."
 echo "######################################################################"

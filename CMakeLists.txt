@@ -58,7 +58,7 @@ set(CMAKE_OSX_DEPLOYMENT_TARGET 12.0)
 
 project(
   JS8Call
-  VERSION   3.0.3
+  VERSION   1.0.0
   LANGUAGES C CXX
 )
 
@@ -131,6 +131,50 @@ include_directories(${Boost_INCLUDE_DIRS})
 include_directories(${FFTW3_INCLUDE_DIRS})
 
 #------------------------------------------------------------------------------#
+# JS8Call Plus: the js8core-plus decoder (vendor/js8core-plus, MIT licence,
+# https://github.com/RobBobbins/JS8Core commit 6012b1e). Built as a plain C++
+# library with no Qt; JS8_Mode/JS8.cpp calls its legacy_decode().
+#------------------------------------------------------------------------------#
+
+find_package(Threads REQUIRED)
+
+set(JS8CORE_PLUS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/vendor/js8core-plus")
+
+add_library(js8core_plus STATIC
+  ${JS8CORE_PLUS_DIR}/src/placeholder.cpp
+  ${JS8CORE_PLUS_DIR}/src/engine/engine.cpp
+  ${JS8CORE_PLUS_DIR}/src/decoder/legacy_decoder.cpp
+  ${JS8CORE_PLUS_DIR}/src/decoder/ldpc.cpp
+  ${JS8CORE_PLUS_DIR}/src/dsp/flatten.cpp
+  ${JS8CORE_PLUS_DIR}/src/dsp/resampler.cpp
+  ${JS8CORE_PLUS_DIR}/src/tx/modulator.cpp
+  ${JS8CORE_PLUS_DIR}/src/protocol/submode.cpp
+  ${JS8CORE_PLUS_DIR}/src/protocol/costas.cpp
+  ${JS8CORE_PLUS_DIR}/src/protocol/constants.cpp
+  ${JS8CORE_PLUS_DIR}/src/protocol/jsc.cpp
+  ${JS8CORE_PLUS_DIR}/src/protocol/jsc_map.cpp
+  ${JS8CORE_PLUS_DIR}/src/protocol/varicode_bits.cpp
+  ${JS8CORE_PLUS_DIR}/src/protocol/varicode_callsign.cpp
+  ${JS8CORE_PLUS_DIR}/src/protocol/varicode_commands.cpp
+  ${JS8CORE_PLUS_DIR}/src/protocol/varicode_frames.cpp
+  ${JS8CORE_PLUS_DIR}/src/protocol/varicode_support.cpp
+)
+
+target_compile_features(js8core_plus PUBLIC cxx_std_20)
+
+target_include_directories(js8core_plus
+  PUBLIC
+    ${JS8CORE_PLUS_DIR}/include
+    ${JS8CORE_PLUS_DIR}/src/engine
+  PRIVATE
+    ${JS8CORE_PLUS_DIR}
+    ${JS8CORE_PLUS_DIR}/vendor
+    ${CMAKE_CURRENT_SOURCE_DIR}/vendor
+)
+
+target_link_libraries(js8core_plus PUBLIC Threads::Threads)
+
+#------------------------------------------------------------------------------#
 # OSX requires an icon file resource.
 #------------------------------------------------------------------------------#
 
@@ -165,6 +209,10 @@ endif (APPLE)
 set(TARGET ${PROJECT_NAME})
 
 qt_add_executable(${TARGET} MACOSX_BUNDLE WIN32 ${ICON_FILE})
+
+# JS8Call Plus: its own program file name (JS8Call-Plus.exe, JS8Call-Plus.app,
+# JS8Call-Plus), so it never replaces an installed JS8Call.
+set_target_properties(${TARGET} PROPERTIES OUTPUT_NAME "JS8Call-Plus")
 
 #------------------------------------------------------------------------------#
 # OSX requires a number of settings in the plist file.
@@ -356,6 +404,7 @@ target_sources(
 target_link_libraries(
   ${TARGET} PRIVATE
   ${FFTW3_LIBRARIES}
+  js8core_plus
   Hamlib::Hamlib
   Qt::Multimedia
   Qt::Network

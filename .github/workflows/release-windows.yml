@@ -1,4 +1,4 @@
-name: Release Build for Windows 11 amd64
+name: JS8Call Plus Release Build for Windows 11 amd64
 run-name: ${{ github.ref_name }} Release Build for Windows 11
 
 on:
@@ -63,7 +63,7 @@ jobs:
       shell: pwsh
       run: mkdir build
 
-    - name: Configure JS8Call
+    - name: Configure JS8Call Plus
       shell: pwsh
       run: |
         cd build
@@ -91,7 +91,7 @@ jobs:
 
         echo "JS8_SAFE_VER=$safeVer" >> $env:GITHUB_ENV
 
-    - name: Build JS8Call
+    - name: Build JS8Call Plus
       shell: pwsh
       run: |
         cd build
@@ -101,7 +101,7 @@ jobs:
       shell: pwsh
       run: |
         cd build
-        $exePath = if (Test-Path "Release\JS8Call.exe") { "Release\JS8Call.exe" } else { "JS8Call.exe" }
+        $exePath = if (Test-Path "Release\JS8Call-Plus.exe") { "Release\JS8Call-Plus.exe" } else { "JS8Call-Plus.exe" }
         cp $exePath JS8Call\
         cp $env:GITHUB_WORKSPACE\js8lib\dll\*.dll JS8Call\
         cp $env:GITHUB_WORKSPACE\LICENSE JS8Call\
@@ -118,42 +118,16 @@ jobs:
           }
         }
 
-    - name: Get signing certificate
-      shell: pwsh
-      run: |
-        echo "${{ secrets.RELEASE_CODE_SIGNING_PFX_BASE64 }}" > 'D:/a/JS8Call-improved/cert.base64'
-        certutil -decode 'D:/a/JS8Call-improved/cert.base64' 'D:/a/JS8Call-improved/certificate.pfx'
-
-    - name: Sign binaries
-      shell: pwsh
-      env:
-        PFX_CERTIFICATE_PASSWORD: ${{ secrets.RELEASE_PFX_CERTIFICATE_PASSWORD }}
-      run: |
-        $signtool = 'C:/Program Files (x86)/Windows Kits/10/bin/10.0.26100.0/x64/signtool.exe'
-        $cert     = 'D:/a/JS8Call-improved/certificate.pfx'
-        cd ./build/JS8Call/
-        & $signtool sign /fd SHA256 /v /f $cert /p "$env:PFX_CERTIFICATE_PASSWORD" *.exe
-        & $signtool sign /fd SHA256 /v /f $cert /p "$env:PFX_CERTIFICATE_PASSWORD" *.dll
-
     - name: INNO Setup
       shell: pwsh
       run: |
         $safeVer = "${{ env.JS8_SAFE_VER }}"
         Write-Host "SAFE_VER=$safeVer"
         $issArg = "/DMyAppVersion=$safeVer"
+        $srcArg = "/DSrcRoot=$env:GITHUB_WORKSPACE"
         Write-Host "ISS Arg: $issArg"
         cd ./build/
-        & 'C:/Program Files (x86)/Inno Setup 6/ISCC.exe' $issArg "/FJS8Call-$safeVer-installer" ../.github/workflows/scripts/ci-windows-installer.iss
-
-    - name: Sign installer
-      shell: pwsh
-      env:
-        PFX_CERTIFICATE_PASSWORD: ${{ secrets.RELEASE_PFX_CERTIFICATE_PASSWORD }}
-      run: |
-        $signtool = 'C:/Program Files (x86)/Windows Kits/10/bin/10.0.26100.0/x64/signtool.exe'
-        $cert     = 'D:/a/JS8Call-improved/certificate.pfx'
-        cd ./build/JS8Call/
-        & $signtool sign /fd SHA256 /v /f $cert /p "$env:PFX_CERTIFICATE_PASSWORD" JS8Call-*-installer.exe
+        & 'C:/Program Files (x86)/Inno Setup 6/ISCC.exe' $issArg $srcArg "/FJS8Call-Plus-$safeVer-installer" ../.github/workflows/scripts/ci-windows-installer.iss
 
     - name: Attestation
       uses: actions/attest-build-provenance@v2
@@ -163,6 +137,6 @@ jobs:
     - name: Upload Artifact
       uses: actions/upload-artifact@v7
       with:
-        name: "JS8Call-${{ env.JS8_SAFE_VER }}-installer"
-        path: ./build/JS8Call/JS8Call-*-installer.exe
+        name: "JS8Call-Plus-${{ env.JS8_SAFE_VER }}-installer"
+        path: ./build/JS8Call/JS8Call-Plus-*-installer.exe
         archive: false

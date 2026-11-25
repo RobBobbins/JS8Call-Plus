@@ -11,10 +11,21 @@
 
 CAboutDlg::CAboutDlg(QWidget *parent) : QDialog(parent), ui(new Ui::CAboutDlg) {
     ui->setupUi(this);
-    setWindowTitle("About JS8Call");
+    setWindowTitle("About JS8Call Plus");
     ui->labelTxt->setText(QString(
         "<h3>%1</h3><br/ >"
         "Build %2 on %3 by %4@%5<br />"
+        "<h3>About JS8Call Plus</h3>"
+        "<p align='left'>JS8Call Plus is based on JS8Call 3.0.3, with the "
+        "js8core-plus decoder.<br />"
+        "It is not the official JS8Call and is not supported by the "
+        "JS8Call-improved team.<br /><br />"
+        "The JS8Call Plus code can be downloaded at "
+        "<a href=\"https://github.com/RobBobbins/JS8Call-Plus\">https://"
+        "github.com/RobBobbins/JS8Call-Plus</a> .<br /><br />"
+        "js8core-plus (JS8 decoder): Kelly-Shane Fuller, VA3OSO, MIT "
+        "licence<br />"
+        "pocketfft: Max-Planck-Society, BSD licence</p>"
         "<h3>About the JS8Call Development Team</h3>"
         "<p align='left'>JS8Call is now being developed by the team that "
         "continued development of the original "

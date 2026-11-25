@@ -1,14 +1,18 @@
-#define MyAppName "JS8Call"
+#define MyAppName "JS8Call Plus"
 #ifndef MyAppVersion
   #define MyAppVersion "0.0.0"
 #endif
 #pragma message "AppVersion is: " + MyAppVersion
-#define MyAppPublisher "JS8Call-improved"
-#define MyAppURL "https://www.js8call.com/"
-#define MyAppExeName "JS8Call.exe"
+#define MyAppPublisher "JS8Call Plus"
+#define MyAppURL "https://github.com/RobBobbins/JS8Call-Plus"
+#define MyAppExeName "JS8Call-Plus.exe"
+; SrcRoot is the checked-out repo, passed in by the build workflow (/DSrcRoot=...)
+#ifndef SrcRoot
+  #define SrcRoot "D:\a\JS8Call-Plus\JS8Call-Plus"
+#endif
 
 [Setup]
-AppId={{B5281957-28FD-4BAE-8D06-FC59898D850E}
+AppId={{31B3285A-8C78-4F1F-A7A3-5EF875B7EE23}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 AppVerName={#MyAppName} {#MyAppVersion}
@@ -16,7 +20,7 @@ AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
-LicenseFile=D:\a\JS8Call-improved\JS8Call-improved\build\JS8Call\LICENSE
+LicenseFile={#SrcRoot}\build\JS8Call\LICENSE
 DefaultDirName={autopf}\{#MyAppName}
 UsePreviousAppDir=no
 ; UninstallDisplayIcon={app}\{#MyAppExeName}
@@ -32,11 +36,11 @@ DisableProgramGroupPage=yes
 ; Uncomment the following line to run in non administrative install mode (install for current user only).
 ;PrivilegesRequired=lowest
 PrivilegesRequiredOverridesAllowed=dialog
-OutputDir=D:\a\JS8Call-improved\JS8Call-improved\build\JS8Call
+OutputDir={#SrcRoot}\build\JS8Call
 ; This can be changed from the ci-windows.yml for release builds
-OutputBaseFilename=JS8Call-installer
-SetupIconFile=D:\a\JS8Call-improved\JS8Call-improved\icons\windows-icons\js8call.ico
-UninstallDisplayIcon=D:\a\JS8Call-improved\JS8Call-improved\icons\windows-icons\js8call.ico
+OutputBaseFilename=JS8Call-Plus-installer
+SetupIconFile={#SrcRoot}\icons\windows-icons\js8call.ico
+UninstallDisplayIcon={#SrcRoot}\icons\windows-icons\js8call.ico
 SolidCompression=yes
 ; WizardStyle introduced in 6.6.0, Github has 6.5.4
 ; WizardStyle=modern dynamic
@@ -48,9 +52,9 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "D:\a\JS8Call-improved\JS8Call-improved\build\JS8Call\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\a\JS8Call-improved\JS8Call-improved\build\JS8Call\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "D:\a\JS8Call-improved\JS8Call-improved\icons\windows-icons\js8call.ico"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#SrcRoot}\build\JS8Call\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#SrcRoot}\build\JS8Call\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "{#SrcRoot}\icons\windows-icons\js8call.ico"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
