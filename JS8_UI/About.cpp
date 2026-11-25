@@ -14,7 +14,7 @@ CAboutDlg::CAboutDlg(QWidget *parent) : QDialog(parent), ui(new Ui::CAboutDlg) {
     setWindowTitle("About JS8Call Plus");
     ui->labelTxt->setText(QString(
         "<h3>%1</h3><br/ >"
-        "Build XXXXXXXXX<br />on 11-25-2026<br />by Carson VA3OSO<br />"
+        "Built on %2<br />by Carson VA3OSO<br />va3oso.dx@gmail.com<br />"
         "<h3>About JS8Call Plus</h3>"
         "<p align='left'>JS8Call Plus is based on JS8Call 3.0.3, with the "
         "js8core-plus decoder.<br />"
@@ -76,7 +76,7 @@ CAboutDlg::CAboutDlg(QWidget *parent) : QDialog(parent), ui(new Ui::CAboutDlg) {
         "W6BAZ,</strong><br/><br/>"
         "and the many other amateur radio operators who have helped bring "
         "JS8Call into the world.</p>"
-    ).arg(program_title()));
+    ).arg(program_title(), CREATED));
 }
 
 CAboutDlg::~CAboutDlg() {}
