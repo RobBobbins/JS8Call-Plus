@@ -36,13 +36,13 @@ Live scoreboard: https://va3oso.ca/js8core/livetest/
   Off unless ticked.
 - Its own settings folder, so it doesn't change JS8Call's settings or
   Message Inbox. Both can be installed side by side.
-- Your status message sends VERSION JS8CALL-PLUS 1.0.0.
+- Your status message sends VERSION JS8CALL-PLUS 1.0.1.
 
 ## Download
 
 From the Releases page:
 
-- Windows: JS8Call-Plus-1.0.0-installer.exe
+- Windows: JS8Call-Plus-1.0.1-installer.exe
 - Mac, Apple Silicon (M1 and later) and Intel: .dmg
 - Linux PC and Raspberry Pi (64-bit Raspberry Pi OS): AppImage
 
@@ -64,7 +64,7 @@ https://js8call-improved.github.io/JS8Call-improved/d6/d14/md_docs_2user__guide_
   Allan W6BAZ, Wyatt KJ4CTD, Joe K0OG, Andreas DJ3EI, Rob K4RWR,
   Jordan KN4CRD. https://github.com/JS8Call-improved/JS8Call-improved
 - JS8Call was created by Jordan Sherer, KN4CRD.
-- js8core-plus decoder: Kelly-Shane Fuller, VA3OSO, MIT licence.
+- js8core-plus decoder: Kelly-Shane Fuller, Carson VA3OSO, MIT licence.
   Based on JS8Core by the JS8Call-improved team.
 - JS8Call is a derivative of WSJT-X (K1JT and the WSJT-X team). It is not
   supported by or endorsed by the WSJT-X development group.

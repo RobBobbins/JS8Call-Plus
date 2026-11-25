@@ -14,16 +14,19 @@ CAboutDlg::CAboutDlg(QWidget *parent) : QDialog(parent), ui(new Ui::CAboutDlg) {
     setWindowTitle("About JS8Call Plus");
     ui->labelTxt->setText(QString(
         "<h3>%1</h3><br/ >"
-        "Build %2 on %3 by %4@%5<br />"
+        "Build XXXXXXXXX<br />on 11-25-2026<br />by Carson VA3OSO<br />"
         "<h3>About JS8Call Plus</h3>"
         "<p align='left'>JS8Call Plus is based on JS8Call 3.0.3, with the "
         "js8core-plus decoder.<br />"
-        "It is not the official JS8Call and is not supported by the "
+        "JS8Call Plus was created as a way for users to use the new "
+        "js8core-plus decoder with JS8 until JS8Call Improved fixes and "
+        "updates their decoder.<br />"
+        "JS8Call Plus is not the official JS8Call and is not supported by the "
         "JS8Call-improved team.<br /><br />"
         "The JS8Call Plus code can be downloaded at "
         "<a href=\"https://github.com/RobBobbins/JS8Call-Plus\">https://"
         "github.com/RobBobbins/JS8Call-Plus</a> .<br /><br />"
-        "js8core-plus (JS8 decoder): Kelly-Shane Fuller, VA3OSO, MIT "
+        "js8core-plus (JS8 decoder): Kelly-Shane Fuller, Carson VA3OSO, MIT "
         "licence<br />"
         "pocketfft: Max-Planck-Society, BSD licence</p>"
         "<h3>About the JS8Call Development Team</h3>"
@@ -73,7 +76,7 @@ CAboutDlg::CAboutDlg(QWidget *parent) : QDialog(parent), ui(new Ui::CAboutDlg) {
         "W6BAZ,</strong><br/><br/>"
         "and the many other amateur radio operators who have helped bring "
         "JS8Call into the world.</p>"
-    ).arg(program_title(), GITSHORT, CREATED, UNAME, MACHINE));
+    ).arg(program_title()));
 }
 
 CAboutDlg::~CAboutDlg() {}
