@@ -238,7 +238,7 @@ cp "$BUILD_DIR/JS8Call-improved/.github/workflows/misc/JS8Call.appdata.xml" \
 # QMAKE points it at our private Qt 6.11.1, not the system Qt,
 # so it bundles the right version
 cd "$BUILD_DIR"
-export EXTRA_PLATFORM_PLUGINS="libqwayland-egl.so;libqoffscreen.so;libqeglfs.so;libqlinuxfb.so;libqminimalegl.so;libqminimal.so"
+export EXTRA_PLATFORM_PLUGINS="libqwayland-generic.so;libqwayland-egl.so;libqoffscreen.so;libqeglfs.so;libqlinuxfb.so;libqminimalegl.so;libqminimal.so"
 export EXTRA_QT_MODULES="waylandcompositor"
 export QMAKE=/usr/lib/js8call/Qt/bin/qmake
 
