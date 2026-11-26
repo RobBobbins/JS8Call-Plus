@@ -1,10 +1,12 @@
 # JS8Call Plus
 
 JS8Call Plus is JS8Call-improved 3.0.3 with a better decoder: js8core-plus.
-It looks and works like JS8Call. Only the decoder is different.
+JS8Call Plus looks and works like JS8Call. Only the decoder is different.
 
 JS8Call Plus is not the official JS8Call and is not supported by the
 JS8Call-improved team.
+
+JS8Call Plus was created by Carson VA3OSO va3oso.dx@gmail.com
 
 ## Why
 
