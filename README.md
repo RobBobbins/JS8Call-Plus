@@ -28,6 +28,36 @@ development code, not in a release yet.
 
 Live scoreboard: https://va3oso.ca/js8core/livetest/
 
+## Costs
+
+JS8Call-improved 3.0.3 uses very little of the processor to decode.
+JS8Call Plus uses more, but it is still a small share.
+
+Measured on one core of an AMD Ryzen 9 5900X. **CPU use** is the share
+of one core used during each transmit period. **Decode time** is how
+long one period takes to decode.
+
+| Band                 | Speed         | 3.0.3 CPU use | Plus CPU use | 3.0.3 decode time | Plus decode time |
+|----------------------|---------------|--------------:|-------------:|------------------:|-----------------:|
+| Crowded, 60 stations | Normal (15 s) | 1.9%          | 25.1%        | 0.29 s            | 3.76 s           |
+| Crowded, 37 stations | Fast (10 s)   | 2.5%          | 18.3%        | 0.25 s            | 1.83 s           |
+| Crowded, 19 stations | Turbo (6 s)   | 2.0%          | 14.6%        | 0.12 s            | 0.88 s           |
+| Crowded, 60 stations | Slow (30 s)   | 2.7%          | 12.1%        | 0.80 s            | 3.62 s           |
+| 4 stations           | Normal (15 s) | 0.35%         | 2.1%         | 0.05 s            | 0.32 s           |
+| Noise only           | Normal (15 s) | 0.13%         | 1.3%         | 0.02 s            | 0.20 s           |
+
+Even the busiest case, a crowded Normal band, uses a quarter of one
+core. On this 12-core processor, that is about 1% of the whole
+processor. On that band, JS8Call Plus decoded 416 frames where 3.0.3
+decoded 140.
+
+Most of the extra work is JS8Call Plus trying your own callsign and the
+stations you heard in the last 10 minutes. These figures are with a full
+list of 17 callsigns.
+
+Not measured yet: Deep Decoding with callsigns, Raspberry Pi and older
+PCs.
+
 ## What's different from JS8Call-improved 3.0.3
 
 - The js8core-plus decoder.
