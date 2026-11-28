@@ -41,6 +41,8 @@ OutputDir={#SrcRoot}\build\JS8Call
 OutputBaseFilename=JS8Call-Plus-installer
 SetupIconFile={#SrcRoot}\icons\windows-icons\js8call.ico
 UninstallDisplayIcon={#SrcRoot}\icons\windows-icons\js8call.ico
+WizardSmallImageFile={#SrcRoot}\icons\windows-icons\wizard_small.bmp
+WizardImageFile={#SrcRoot}\icons\windows-icons\wizard_large.bmp
 SolidCompression=yes
 ; WizardStyle introduced in 6.6.0, Github has 6.5.4
 ; WizardStyle=modern dynamic
